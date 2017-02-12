@@ -1,0 +1,55 @@
+[color]
+	ui          = true
+	branch      = true
+	diff        = true
+	interactive = true
+	status      = true
+
+[color "branch"]
+	; current  = ; the current branch
+	; local    = ; a local branch
+	; remote   = ; a remote-tracking branch in refs/remotes/
+	; upstream = ; upstream tracking branch
+	; plain    = ; other refs
+
+[color "diff"]
+	; plain      = white dim     ; context text
+	; meta       = white         ; metainformation
+	; frag       = cyan          ; hunk header
+	; func       = white         ; function in hunk header
+	; old        = red           ; removed lines
+	; new        = green         ; added lines
+	; commit     = yellow        ; commit headers
+	; whitespace = white reverse ; highlighting whitespace errors
+
+[color "decorate"]
+	; branch       =
+	; remoteBranch =
+	; tag          =
+	; stash        =
+
+[color "grep"]
+	; context       = ; non-matching text in context lines (when using -A, -B, or -C)
+	; filename      = ; filename prefix (when not using -h)
+	; function      = ; function name lines (when using -p)
+	; linenumber    = ; line number prefix (when using -n)
+	; match         = ; matching text (same as setting matchContext and matchSelected)
+	; matchContext  = ; matching text in context lines
+	; matchSelected = ; matching text in selected lines
+	; selected      = ; non-matching text in selected lines
+	; separator     = ; separators between fields on a line (:, -, and =) and between hunks (--)
+
+[color "interactive"]
+	; prompt =
+	; header =
+	; help   =
+	; error  =
+
+[color "status"]
+	; header      =       ; the header text of the status message
+	; added       = yellow
+	; updated     =       ; files which are added but not committed
+	; changed     = green ; files which are changed but not added in the index
+	; untracked   = cyan  ; files which are not tracked by Git
+	; branch      =       ; the current branch
+	; nobranch    =       ; the color the no branch warning is shown in, defaulting to red

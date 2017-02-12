@@ -1,0 +1,87 @@
+[alias]
+
+# Info
+s  = status
+ss = status --short
+sb = status --short --branch
+
+b  = branch
+ba = branch --all
+bc = branch --all --contains           # find branches by commit id
+bn = rev-parse --abbrev-ref HEAD       # current branch name
+bnf = symbolic-ref HEAD                # current branch full name
+
+d  = diff --ignore-all-space           # hide space only related changes
+dd = diff
+dn = diff --numstat                    # list changed files
+
+# Logging
+log-authors = log --pretty=format:'\t%C(white dim)%h%C(reset) %Cred%ad %C(blue)[%an]%C(bold yellow)%d%Creset %s %C(bold green)(%ar)%C(reset)'
+log-oneline = log --pretty=format:'%C(white dim)%h%C(reset) %Cred%ad%C(bold yellow)%d%C(reset) %s %Cblue[%an]'
+ll = !git log-oneline --date short
+l  = !git ll -10
+lg = !git log-authors --date=short --graph
+ln = !git ll --numstat
+lp = log --patch --decorate
+lm = !git ll --author=\"$(git config --get user.name)\"                         # print only own commits
+lo = !git ll --perl-regexp --author=\"^((?!$(git config --get user.name)).*)$\" # exclude own commits
+
+# experimantal
+   # show changes since last own commit
+x1 = diff $(git rev-list --author="$(git config --get user.name)" -1 HEAD) HEAD
+
+# Committing
+a  = add --verbose
+aa = add --verbose --all
+ai = add --verbose --interactive
+ap = add --verbose --patch
+au = add --verbose --update
+c  = commit --verbose --message
+ca = commit --verbose --all --message
+cm = commit --amend
+cmw = commit --amend --cleanup=whitespace
+
+# Manage commits
+cp  = cherry-pick
+cpc = cherry-pick --continue
+cpa = cherry-pick --abort
+ra = rebase --abort
+rc = rebase --continue
+ri = rebase --interactive
+
+# Remote
+rl = remote --verbose
+rp = remote prune
+fa = fetch --all
+
+# Manage state
+r  = reset
+rh = reset --hard
+rs = reset --soft
+
+co = checkout
+cb = checkout --branch
+
+hs = stash --keep-index
+hu = stash --keep-index --include-untracked
+ha = stash --all
+hl = stash list
+hp = stash pop
+
+bd = branch --delete
+bdf = branch --delete --force
+
+# Config (Parameters)
+alias = config --get-regexp ^alias
+pg = config --get-regex
+
+# Init repo
+it = !git init && git commit -m root --allow-empty
+
+# Misc
+g = grep -Ii
+ls = ls-files
+wt = worktree
+m = submodule
+ms = submodule status
+

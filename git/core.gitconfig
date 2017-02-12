@@ -1,0 +1,29 @@
+[apply]
+whitespace = nowarn
+
+[branch]
+autosetuprebase = always
+
+[diff]
+memonicprefix = true
+
+[core]
+autocrlf = false
+editor = /usr/bin/vim
+excludesfile = ~/.gitignore
+filemode = false
+pager=less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init
+safecrlf = false
+trustctime = false
+
+[credential]
+helper = cache --timeout=3600
+
+[merge]
+tool = vimdiff
+
+[mergetool]
+keepbackups = false
+keeptemporaries = false
+prompt = false
+trustexitcode = false
