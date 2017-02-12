@@ -1,0 +1,32 @@
+[user]
+	email = shestakovsemen@gmail.com
+	name = Semen Shestakov
+
+[include]
+	path = gitconfig/alias.gitconfig
+	path = gitconfig/color.gitconfig
+	path = gitconfig/core.gitconfig
+[core]
+	trustctime = false
+	filemode = false
+[push]
+	default = upstream
+
+[alias]
+	grog = log --graph --abbrev-commit --decorate --all --format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\"
+	last = log -1 --stat
+	cl = clone
+	ci = commit
+	st = status -sb
+	br = branch
+	unstage = reset HEAD --
+	dc = diff --cached
+[credential]
+	helper = cache --timeout=3600
+[merge]
+	tool = vimdiff
+[mergetool]
+	keeptemporaries = false
+	keepbackups = false
+	prompt = false
+	trustexitcode = false
