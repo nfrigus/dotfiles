@@ -24,10 +24,15 @@
 #
 # Some shortcuts for different listings
 alias ll='ls -lA'                             # long list
+
+# listing
 alias ls-npm='npm ls --depth 0'
 alias ls-pip='pip list'
 alias ls-ssh="grep -r 'Host ' '$HOME/.ssh/'"
+alias ls-foo='compgen -A function'
 
+
+# docker
 alias dkr=docker
 alias dkrc=docker-compose
 
@@ -51,3 +56,6 @@ path() {
 try() {
     $(echo "$*") && echo 1 || echo 0
 }
+
+
+

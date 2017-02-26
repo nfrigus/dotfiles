@@ -11,4 +11,4 @@ path = ~/.git/core.gitconfig
 default = matching
 
 [core]
-trustctime = false
+	trustctime = false
