@@ -21,8 +21,8 @@
 
 # Ensure file loaded once only
 # TODO: find who calls it multiple times
-if [[ -z $BASH_INIT_DIR ]]
-then export BASH_INIT_DIR=$OLDPWD
+if [[ -z "$BASH_INIT_DIR" ]]
+then export BASH_INIT_DIR="$OLDPWD"
 else return
 fi
 
@@ -39,4 +39,5 @@ source '/home/shest/.babun-docker/setup.sh'
 source ~/.phpbrew/bashrc
 
 # restore init dir
-[ $BASH_INIT_DIR != "/usr/bin" ] && cd $BASH_INIT_DIR
+[ "$BASH_INIT_DIR" != "/usr/bin" ] && cd "$BASH_INIT_DIR"
+
