@@ -24,29 +24,36 @@
 #
 # Some shortcuts for different listings
 alias ll='ls -lA'                             # long list
-
-# listing
 alias ls-npm='npm ls --depth 0'
 alias ls-pip='pip list'
 alias ls-ssh="grep -r 'Host ' '$HOME/.ssh/'"
-alias ls-foo='compgen -A function'
 
-
-# docker
 alias dkr=docker
 alias dkrc=docker-compose
+
+foos() {
+    declare -F | awk '{print$3}' && alias | sed -e 's/alias //' -e "s/=/\t/"
+}
 
 dkr-sh() {
     dkr exec -it $* bash
 }
 
 app() {
-    local app=$PWD/artisan
-    if [ -f $PWD/artisan ]; then
-        $app $*
+    local app=""
+
+    if [ -f "$PWD/artisan" ]; then
+        app=./artisan
+    elif [ -f "$PWD/app/console" ]; then
+        app=app/console
+    elif [ -f "$PWD/bin/console" ]; then
+        app=bin/console
     else
         echo Not found
+        return 1
     fi
+
+    $app $*
 }
 
 path() {
@@ -56,6 +63,4 @@ path() {
 try() {
     $(echo "$*") && echo 1 || echo 0
 }
-
-
 
