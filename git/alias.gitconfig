@@ -84,4 +84,4 @@ ls = ls-files
 wt = worktree
 m = submodule
 ms = submodule status
-
+pf = push --force-with-lease
