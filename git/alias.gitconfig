@@ -4,6 +4,9 @@
 s  = status
 ss = status --short
 sb = status --short --branch
+# list branches sorted by last modified
+bh = "for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads"
+
 
 b  = branch
 ba = branch --all
