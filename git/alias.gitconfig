@@ -63,7 +63,8 @@ rh = reset --hard
 rs = reset --soft
 
 co = checkout
-cb = checkout --branch
+cob = checkout -b
+con = checkout --orphan
 
 hs = stash --keep-index
 hu = stash --keep-index --include-untracked
