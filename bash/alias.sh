@@ -60,7 +60,7 @@ app() {
     local app=""
 
     if [ -f "$PWD/artisan" ]; then
-        app=./artisan
+        app="php artisan"
     elif [ -f "$PWD/app/console" ]; then
         app=app/console
     elif [ -f "$PWD/bin/console" ]; then
