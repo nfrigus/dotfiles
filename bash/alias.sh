@@ -35,8 +35,25 @@ foos() {
     declare -F | awk '{print$3}' && alias | sed -e 's/alias //' -e "s/=/\t/"
 }
 
-dkr-sh() {
-    dkr exec -it $* bash
+dr() {
+    if ! which winpty &> /dev/null; then
+        local babun_docker_winpty_dir="$HOME/.winpty"
+        PATH="$babun_docker_winpty_dir:$PATH"
+    fi
+
+    case $1 in
+    sh|ssh)
+        shift
+        docker exec -it $1 bash
+        ;;
+    i)
+        shift
+        docker images $*
+        ;;
+    *)
+        docker $*
+        ;;
+    esac
 }
 
 app() {
