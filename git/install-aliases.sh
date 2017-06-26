@@ -6,6 +6,6 @@ INSTAL_DIR=~/.git.d
 
 cd "$INSTAL_DIR"
 
-curl -O https://raw.githubusercontent.com/nfrigus/dotfiles/master/git/alias.gitconfig
+curl -kO https://raw.githubusercontent.com/nfrigus/dotfiles/master/git/alias.gitconfig
 
 git config --global --add include.path "$INSTAL_DIR/alias.gitconfig"
