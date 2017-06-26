@@ -38,6 +38,9 @@ source '/home/shest/.babun-docker/setup.sh'
 # https://github.com/racklin/phpbrew/commit/48943f861e3d7a94d0fa1bf1e24781f11ac1d61d
 source ~/.phpbrew/bashrc
 
+# added by travis gem
+[ -f /home/shest/.travis/travis.sh ] && source /home/shest/.travis/travis.sh
+
+
 # restore init dir
 [ "$BASH_INIT_DIR" != "/usr/bin" ] && cd "$BASH_INIT_DIR"
-
