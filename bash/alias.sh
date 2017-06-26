@@ -31,6 +31,10 @@ alias ls-ssh="grep -r 'Host ' '$HOME/.ssh/'"
 alias dkr=docker
 alias dkrc=docker-compose
 
+wanip() {
+    dig +short myip.opendns.com @resolver1.opendns.com
+}
+
 foos() {
     declare -F | awk '{print$3}' && alias | sed -e 's/alias //' -e "s/=/\t/"
 }
