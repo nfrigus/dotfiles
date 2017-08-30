@@ -75,6 +75,7 @@ hp = stash pop
 
 bd = branch --delete
 bdf = branch --delete --force
+bw = git update-ref -d HEAD            # remove all commits from the current branch
 
 # Config (Parameters)
 alias = config --get-regexp ^alias
