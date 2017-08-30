@@ -64,7 +64,7 @@ rh = reset --hard
 rs = reset --soft
 
 co = checkout
-cob = checkout -b
+cob = checkout --branch
 con = checkout --orphan
 
 hs = stash --keep-index
