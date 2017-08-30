@@ -55,6 +55,7 @@ ri = rebase --interactive
 # Remote
 rl = remote --verbose
 rp = remote prune
+rpo = remote prune origin
 fa = fetch --all
 
 # Manage state
