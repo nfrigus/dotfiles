@@ -91,3 +91,7 @@ wt = worktree
 m = submodule
 ms = submodule status
 pf = push --force-with-lease
+
+# Experimantal
+sshow = "!f() { git stash show stash^{/$*} -p; }; f"
+sapply = "!f() { git stash apply stash^{/$*}; }; f"
