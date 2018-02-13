@@ -28,9 +28,6 @@ alias ls-npm='npm ls --depth 0'
 alias ls-pip='pip list'
 alias ls-ssh="grep -r 'Host ' '$HOME/.ssh/'"
 
-alias dkr=docker
-alias dkrc=docker-compose
-
 wanip() {
     dig +short myip.opendns.com @resolver1.opendns.com
 }
