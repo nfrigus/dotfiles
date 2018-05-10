@@ -1,6 +1,6 @@
 [submodule "vim"]
 	path = vim
-	url = git://github.com/dotphiles/dotvim.git
+	url = git@github.com:amix/vimrc.git
 [submodule "babun-docker"]
 	path = babun-docker
 	url = https://github.com/tiangolo/babun-docker.git
