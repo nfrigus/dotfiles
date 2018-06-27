@@ -1,5 +1,5 @@
 [dotfiles]
-repository = ~/Dotfiles
+repository = ~/repo/dotfiles
 ignore = [
     '.*',
     '*.swp']
