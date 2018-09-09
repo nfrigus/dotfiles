@@ -9,9 +9,12 @@ path = ~/.git/core.gitconfig
 
 [push]
 default = current
+[pull]
+rebase = true
+[rebase]
+autoStash = true
 
 [core]
 trustctime = false
 editor = vim
 excludesfile = ~/.gitignore
-

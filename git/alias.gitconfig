@@ -4,15 +4,14 @@
 s  = status
 ss = status --short
 sb = status --short --branch
-# list branches sorted by last modified
-bh = "for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads"
-
 
 b  = branch
 ba = branch --all
 bc = branch --all --contains           # find branches by commit id
 bn = rev-parse --abbrev-ref HEAD       # current branch name
 bnf = symbolic-ref HEAD                # current branch full name
+# list branches sorted by last modified
+bh = "for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads"
 
 d  = diff --ignore-all-space           # hide space only related changes
 dd = diff
@@ -28,10 +27,6 @@ ln = !git ll --numstat
 lp = log --patch --decorate
 lm = !git ll --author=\"$(git config --get user.name)\"                         # print only own commits
 lo = !git ll --perl-regexp --author=\"^((?!$(git config --get user.name)).*)$\" # exclude own commits
-
-# experimantal
-   # show changes since last own commit
-x1 = diff $(git rev-list --author="$(git config --get user.name)" -1 HEAD) HEAD
 
 # Committing
 a  = add --verbose
@@ -56,7 +51,7 @@ ri = rebase --interactive
 rl = remote --verbose
 rp = remote prune
 rpo = remote prune origin
-fa = fetch --all
+fa = fetch --all --tags --verbose
 
 # Manage state
 r  = reset
@@ -77,6 +72,11 @@ bd = branch --delete
 bdf = branch --delete --force
 bw = git update-ref -d HEAD            # remove all commits from the current branch
 
+pf = push --force-with-lease
+pfo = push --force-with-lease origin
+pff = push --force
+pffo = push --force origin
+
 # Config (Parameters)
 alias = config --get-regexp ^alias
 pg = config --get-regex
@@ -90,8 +90,9 @@ ls = ls-files
 wt = worktree
 m = submodule
 ms = submodule status
-pf = push --force-with-lease
 
-# Experimantal
+# experimantal
+   # show changes since last own commit
+what = diff $(git rev-list --author="$(git config --get user.name)" -1 HEAD) HEAD
 sshow = "!f() { git stash show stash^{/$*} -p; }; f"
 sapply = "!f() { git stash apply stash^{/$*}; }; f"
