@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+	echo "Usage:"
+	echo "  git sync-remote <destination-remote> [source-remote]"
+	exit 1
+fi
+
+git push ${2:-origin} "refs/remotes/$1/*:refs/heads/*"
