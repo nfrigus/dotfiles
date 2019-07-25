@@ -17,3 +17,4 @@ done
 
 # restore init dir
 [ "$BASH_INIT_DIR" != "/usr/bin" ] && cd "$BASH_INIT_DIR"
+
