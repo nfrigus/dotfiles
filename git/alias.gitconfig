@@ -11,7 +11,7 @@ bc = branch --all --contains           # find branches by commit id
 bn = rev-parse --abbrev-ref HEAD       # current branch name
 bnf = symbolic-ref HEAD                # current branch full name
 # list branches sorted by last modified
-bh = "for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads"
+bh = "for-each-ref --sort='-authordate' --format='%(authordate:iso)%09%(objectname:short)%09%(refname)' refs"
 
 d  = diff --ignore-all-space           # hide space only related changes
 dd = diff
@@ -19,7 +19,7 @@ dn = diff --numstat                    # list changed files
 
 # Logging
 log-authors = log --pretty=format:'\t%C(white dim)%h%C(reset) %Cred%ad %C(blue)[%an]%C(bold yellow)%d%Creset %s %C(bold green)(%ar)%C(reset)'
-log-oneline = log --pretty=format:'%C(white dim)%h%C(reset) %Cred%ad%C(bold yellow)%d%C(reset) %s %Cblue[%an]'
+log-oneline = log --pretty=format:'%C(white dim)%h%C(reset) %Cred%ad%C(reset) %s %Cblue[%an]%C(bold yellow)%d%C(reset)'
 ll = !git log-oneline --date short
 l  = !git ll -10
 lg = !git log-authors --date=short --graph
@@ -68,13 +68,13 @@ ha = stash --all
 hl = stash list
 hp = stash pop
 
-bd = branch --delete
+bd  = branch --delete
 bdf = branch --delete --force
-bw = git update-ref -d HEAD            # remove all commits from the current branch
+bw  = update-ref -d HEAD            # remove all commits from the current branch
 
-pf = push --force-with-lease
-pfo = push --force-with-lease origin
-pff = push --force
+pf   = push --force-with-lease
+pfo  = push --force-with-lease origin
+pff  = push --force
 pffo = push --force origin
 
 # Config (Parameters)
@@ -93,6 +93,6 @@ ms = submodule status
 
 # experimantal
    # show changes since last own commit
+   # FIXME: Fail processing author with spaces (qoutes ignored)
 what = diff $(git rev-list --author="$(git config --get user.name)" -1 HEAD) HEAD
-sshow = "!f() { git stash show stash^{/$*} -p; }; f"
-sapply = "!f() { git stash apply stash^{/$*}; }; f"
+untrack = "branch --unset-upstream"
