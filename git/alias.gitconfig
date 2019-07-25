@@ -91,6 +91,7 @@ ls = ls-files
 wt = worktree
 m = submodule
 ms = submodule status
+mi = submodule update --init --recursive
 
 # experimantal
    # show changes since last own commit
