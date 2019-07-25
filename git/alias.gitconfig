@@ -16,6 +16,7 @@ bh = "for-each-ref --sort='-authordate' --format='%(authordate:iso)%09%(objectna
 d  = diff --ignore-all-space           # hide space only related changes
 dd = diff
 dn = diff --numstat                    # list changed files
+ds = diff --staged
 
 # Logging
 log-authors = log --pretty=format:'\t%C(white dim)%h%C(reset) %Cred%ad %C(blue)[%an]%C(bold yellow)%d%Creset %s %C(bold green)(%ar)%C(reset)'
