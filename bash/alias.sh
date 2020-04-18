@@ -94,3 +94,6 @@ try() {
     $(echo "$*") && echo 1 || echo 0
 }
 
+apt-find() {
+    apt search $* | grep -vE '^$' | sed -re 'N;s,/.*\n,|,' | column -ts '|' | grep $*
+}
