@@ -4,7 +4,7 @@
 [[ "$-" != *i* ]] && return
 
 # Imports
-for i in `find "$HOME/.bash/" -name '*.sh'`; do
+for i in `find "${HOME}/dotfiles/bash/" -name '*.sh'`; do
     source "$i"
 done
 

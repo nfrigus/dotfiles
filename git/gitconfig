@@ -3,9 +3,9 @@ email = shestakovsemen@gmail.com
 name = Semen Shestakov
 
 [include]
-path = ~/.git/alias.gitconfig
-path = ~/.git/color.gitconfig
-path = ~/.git/core.gitconfig
+path = ~/dotfiles/git/alias.gitconfig
+path = ~/dotfiles/git/color.gitconfig
+path = ~/dotfiles/git/core.gitconfig
 
 [push]
 default = current
@@ -22,4 +22,3 @@ editor = vim
 excludesfile = ~/.gitignore
 fileMode = false
 autocrlf = false
-

@@ -1,6 +1,6 @@
 # Add dotfiles binaries to path and remove duplicates from it
 DOTFILES_PATH="${HOME}/dotfiles"
-PATH="${DOTFILES_PATH}/bin/:${PATH}"
+PATH="${DOTFILES_PATH}/home/bin/:${PATH}"
 PATH=`path consolidate "${PATH}"`
 
 

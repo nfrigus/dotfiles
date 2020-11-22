@@ -1,7 +1,0 @@
-[dotfiles]
-repository = ~/repo/dotfiles
-ignore = [
-    '.*',
-    '*.swp']
-externals = {}
-

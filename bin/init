@@ -1,0 +1,11 @@
+#/bin/bash
+
+ln -sn "${PWD}" "${HOME}/dotfiles"
+
+ln -s "./dotfiles/home/bashrc"     "${HOME}/.bashrc"
+ln -s "./dotfiles/home/bin"        "${HOME}/.bin"
+ln -s "./dotfiles/home/tmux.conf"  "${HOME}/.tmux.conf"
+ln -s "./dotfiles/home/vimrc"      "${HOME}/.vimrc"
+
+ln -s "./dotfiles/git/gitconfig"  "${HOME}/.gitconfig"
+ln -s "./dotfiles/git/gitignore"  "${HOME}/.gitignore"
