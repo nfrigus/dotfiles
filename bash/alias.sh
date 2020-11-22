@@ -48,12 +48,18 @@ foos() {
     declare -F | awk '{print$3}' && alias | sed -e 's/alias //' -e "s/=/\t/"
 }
 
-dr() {
-    if ! which winpty &> /dev/null; then
-        local babun_docker_winpty_dir="$HOME/.winpty"
-        PATH="$babun_docker_winpty_dir:$PATH"
-    fi
+https-cert() {
+    local HOST="$1"
+    local PORT="${2:-443}"
+    echo | openssl s_client -showcerts -servername "$HOST" -connect "$HOST:$PORT" 2>/dev/null | openssl x509 -inform pem -noout -text
+}
 
+read-cert() {
+    local FILE="$1"
+    openssl x509 -text < "$FILE"
+}
+
+dr() {
     case $1 in
     sh|ssh)
         shift
