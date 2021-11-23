@@ -48,16 +48,19 @@ foos() {
     declare -F | awk '{print$3}' && alias | sed -e 's/alias //' -e "s/=/\t/"
 }
 
-https-cert() {
-    local HOST="$1"
-    local PORT="${2:-443}"
-    echo | openssl s_client -showcerts -servername "$HOST" -connect "$HOST:$PORT" 2>/dev/null | openssl x509 -inform pem -noout -text
-}
+# todo: Add usage info
+ssl-test() {
+    local host="$1"
+    local port="${2:-443}"
 
-read-cert() {
-    local FILE="$1"
-    openssl x509 -text < "$FILE"
+    if [ -f "$host" ]; then
+        openssl x509 -text < "$host"
+        else
+        echo | openssl s_client -showcerts -servername "$host" -connect "$host:$port" 2>/dev/null | openssl x509 -inform pem -noout -text
+    fi
 }
+alias https-cert='ssl-test'
+alias read-cert='ssl-test'
 
 dr() {
     case $1 in
