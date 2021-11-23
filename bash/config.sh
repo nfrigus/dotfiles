@@ -1,9 +1,3 @@
-# Add dotfiles binaries to path and remove duplicates from it
-DOTFILES_PATH="${HOME}/dotfiles"
-PATH="${DOTFILES_PATH}/home/bin/:${PATH}"
-PATH=`path consolidate "${PATH}"`
-
-
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth

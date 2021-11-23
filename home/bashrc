@@ -3,11 +3,17 @@
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
+# env
+# Add dotfiles binaries to path and remove duplicates from it
+DOTFILES_PATH="${HOME}/dotfiles"
+PATH="${DOTFILES_PATH}/home/bin/:${PATH}"
+PATH=`path consolidate "${PATH}"`
+
+
 # Imports
-for i in `find "${HOME}/dotfiles/bash/" -name '*.sh'`; do
+for i in `find "${DOTFILES_PATH}/bash/" -name '*.sh'`; do
     source "$i"
 done
 
 # local settings
 [ ~/.bashrc.sh ] && source ~/.bashrc.sh
-
