@@ -98,3 +98,4 @@ mi = submodule update --init --recursive
    # FIXME: Fail processing author with spaces (qoutes ignored)
 what = diff $(git rev-list --author="$(git config --get user.name)" -1 HEAD) HEAD
 untrack = "branch --unset-upstream"
+reset-permissions = !git diff -p -R --no-ext-diff --no-color | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply
