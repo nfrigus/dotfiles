@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: git recently-checkout-branches
+# Usage: git checkout-log
 #
 # Shows timestamp and name of recently checked-out branches in reverse
 # chronological order. This is powered by git-reflog, but excludes branches

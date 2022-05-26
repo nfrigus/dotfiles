@@ -1,9 +1,11 @@
 [alias]
 
 # Info
+bs = show-branch
 s  = status
-ss = status --short
 sb = status --short --branch
+si = status --ignored
+ss = status --short
 
 b  = branch
 ba = branch --all
@@ -12,22 +14,39 @@ bn = rev-parse --abbrev-ref HEAD       # current branch name
 bnf = symbolic-ref HEAD                # current branch full name
 # list branches sorted by last modified
 bh = "for-each-ref --sort='-authordate' --format='%(authordate:iso)%09%(objectname:short)%09%(refname)' refs"
+wip = branch --no-merged               # list unmerged branches
 
-d  = diff --ignore-all-space           # hide space only related changes
+d  = diff --ignore-all-space
 dd = diff
-dn = diff --numstat                    # list changed files
+dn = diff --numstat
 ds = diff --staged
+dw = diff --word-diff
+
+# Statats
+count = rev-list --count HEAD          # count commits
+size = count-objects --human-readable  # repository disc space
 
 # Logging
 log-authors = log --pretty=format:'\t%C(white dim)%h%C(reset) %Cred%ad %C(blue)[%an]%C(bold yellow)%d%Creset %s %C(bold green)(%ar)%C(reset)'
 log-oneline = log --pretty=format:'%C(white dim)%h%C(reset) %Cred%ad%C(reset) %s %Cblue[%an]%C(bold yellow)%d%C(reset)'
-ll = !git log-oneline --date short
+
+# Logging > Filters
+log-alien = !git ll --perl-regexp --author=\"^((?!$(git config --get user.name)).*)$\"
+log-own = !git ll --author=\"$(git config --get user.name)\"
+log-unpushed = !git ll --branches --not --remotes
+
+# Logging > Quick access
 l  = !git ll -10
+lc = whatchanged
 lg = !git log-authors --date=short --graph
+lga = !git log --graph --decorate --oneline $(git rev-list --walk-reflogs --all)
+ll = !git log-oneline --date=short
 ln = !git ll --numstat
 lp = log --patch --decorate
-lm = !git ll --author=\"$(git config --get user.name)\"                         # print only own commits
-lo = !git ll --perl-regexp --author=\"^((?!$(git config --get user.name)).*)$\" # exclude own commits
+
+# Search
+g = grep --heading --line-number
+lf = log --all --grep
 
 # Committing
 a  = add --verbose
@@ -35,9 +54,9 @@ aa = add --verbose --all
 ai = add --verbose --interactive
 ap = add --verbose --patch
 au = add --verbose --update
-c  = commit --verbose --message
-ca = commit --verbose --all --message
-cm = commit --amend
+aw = !git diff --ignore-all-space | git apply --cached # stage changes without whitespaces
+c  = commit --allow-empty --message
+cm = commit --allow-empty --amend
 cmw = commit --amend --cleanup=whitespace
 
 # Manage commits
@@ -49,10 +68,13 @@ rc = rebase --continue
 ri = rebase --interactive
 
 # Remote
+untrack = branch --unset-upstream
+track = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
+fa = fetch --all --tags --verbose
+pf = push --force-with-lease
 rl = remote --verbose
 rp = remote prune
 rpo = remote prune origin
-fa = fetch --all --tags --verbose
 
 # Manage state
 r  = reset
@@ -63,39 +85,40 @@ co = checkout
 cob = checkout --branch
 con = checkout --orphan
 
-hs = stash --keep-index
-hu = stash --keep-index --include-untracked
-ha = stash --all
-hl = stash list
-hp = stash pop
+k = stash
+ka = stash --all
+kl = stash list
+kp = stash pop
+ks = stash --keep-index
+ku = stash --keep-index --include-untracked
 
 bd  = branch --delete
 bdf = branch --delete --force
 bw  = update-ref -d HEAD            # remove all commits from the current branch
 
-pf   = push --force-with-lease
-pfo  = push --force-with-lease origin
-pff  = push --force
-pffo = push --force origin
-
 # Config (Parameters)
-alias = config --get-regexp ^alias
+alias = !git config --get-regexp ^alias | sed -r 's/alias.(\\S+) /\\1>/' | column -ts'>' -l2
 pg = config --get-regex
 
 # Init repo
 it = !git init && git commit -m root --allow-empty
 
+# Export
+save-branch = bundle create bundle.git HEAD
+zip = archive HEAD --format=zip --output=repo.zip
+
 # Misc
-g = grep -Ii
 ls = ls-files
-wt = worktree
+lso = ls-files -o
 m = submodule
-ms = submodule status
 mi = submodule update --init --recursive
+ms = submodule status
+n = notes
+wt = worktree
 
 # experimantal
    # show changes since last own commit
    # FIXME: Fail processing author with spaces (qoutes ignored)
-what = diff $(git rev-list --author="$(git config --get user.name)" -1 HEAD) HEAD
-untrack = "branch --unset-upstream"
+clear = clean -fdx
 reset-permissions = !git diff -p -R --no-ext-diff --no-color | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply
+what = diff $(git rev-list --author=\"$(git config --get user.name)\" -1 HEAD) HEAD
