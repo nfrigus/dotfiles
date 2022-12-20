@@ -19,6 +19,7 @@ path() {
     echo "$1" | tr : "\n"
 }
 
+# todo: wip
 path-add() {
 	export XXX=7777
 }

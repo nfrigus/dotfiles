@@ -1,19 +1,4 @@
 # Aliases
-#
-# Some example alias instructions
-# If these are enabled they will be used instead of any instructions
-# they may mask.  For example, alias rm='rm -i' will mask the rm
-# application.  To override the alias instruction use a \ before, ie
-# \rm will call the real rm not the alias.
-#
-# Default to human readable figures
-# alias df='df -h'
-# alias du='du -h'
-#
-# Misc :)
-# alias less='less -r'                          # raw control characters
-# alias whence='type -a'                        # where, of a sort
-
 
 # Some shortcuts for different listings
 alias ls-npm='npm ls --depth 0'
@@ -24,6 +9,9 @@ alias ls-ssh="grep -r 'Host ' '$HOME/.ssh/'"
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+
+alias kube=kubectl
+alias kcat=kafkacat
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -76,23 +64,6 @@ dr() {
         docker $*
         ;;
     esac
-}
-
-app() {
-    local app=""
-
-    if [ -f "$PWD/artisan" ]; then
-        app="php artisan"
-    elif [ -f "$PWD/app/console" ]; then
-        app=app/console
-    elif [ -f "$PWD/bin/console" ]; then
-        app=bin/console
-    else
-        echo Not found
-        return 1
-    fi
-
-    $app $*
 }
 
 try() {
