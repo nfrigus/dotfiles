@@ -1,13 +1,17 @@
-env    AWS_VAULT_BACKEND file
-home .bin     $ROOT/home/bin
+home .bin $ROOT/home/bin
+
+env AWS_VAULT_BACKEND file
+
 path /home/linuxbrew/.linuxbrew/bin
 path /home/linuxbrew/.linuxbrew/opt/php@7.4/bin
 path /home/linuxbrew/.linuxbrew/opt/php@7.4/sbin
 path $HOME/.local/bin
 path $HOME/bin
+path $HOME/go/bin
 path $ROOT/home/bin
 # Todo: add WSL-specific binaries when needed only
 path $ROOT/home/bin/wsl
+
 source $HOME/.cargo/env
 source config.sh
 source functions.sh
