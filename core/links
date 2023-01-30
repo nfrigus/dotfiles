@@ -1,3 +1,2 @@
 home dotfiles $ROOT
-home .bin     $ROOT/home/bin
 home .bashrc  bashrc.sh

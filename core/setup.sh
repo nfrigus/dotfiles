@@ -6,6 +6,8 @@ main() {
     MODULES="$(load_modules_dirs)"
 
     set_symlinks
+    cache_paths
+    cache_sources
 
     echo Dotfiles succesfully installed
 }
@@ -16,7 +18,7 @@ set_symlinks() {
     for module in ${MODULES[@]}; do
         [ -f "$module/links" ] \
         && cat "$module/links" \
-        | awk '/^home/' \
+        | awk '/^home /' \
         | cut -d\  -f2- \
         | while read -r entry; do
             k="$(echo $entry | cut -d' ' -f1)"
@@ -28,6 +30,9 @@ set_symlinks() {
                 "\$ROOT/"*)
                     v="${v/\$ROOT/dotfiles}"
                     ;;
+                /*)
+                    :
+                    ;;
                 *)
                     v="dotfiles/$module/$v"
                     ;;
@@ -35,6 +40,58 @@ set_symlinks() {
             set_symlink "$HOME/$k" "$v"
         done
     done
+}
+
+cache_paths() {
+    mkdir -p "$INSTAL_PATH/var/bash"
+    for module in ${MODULES[@]}; do
+        [ -f "$module/links" ] \
+        && cat "$module/links" \
+        | awk '/^path /' \
+        | cut -d\  -f2- \
+        | while read -r path; do
+            case $path in
+                "\$ROOT/"*)
+                    path="$HOME/${path/\$ROOT/dotfiles}"
+                    ;;
+                "\$HOME/"*)
+                    path="$HOME/${path/\$HOME\/}"
+                    ;;
+                /*)
+                    :
+                    ;;
+                *)
+                    path="$HOME/dotfiles/$module/$path"
+            esac
+            echo "$path"
+        done
+    done > "$INSTAL_PATH/var/bash/paths"
+}
+
+cache_sources() {
+    mkdir -p "$INSTAL_PATH/var/bash"
+    for module in ${MODULES[@]}; do
+        [ -f "$module/links" ] \
+        && cat "$module/links" \
+        | awk '/^source /' \
+        | cut -d\  -f2- \
+        | while read -r source; do
+            case $source in
+                "\$ROOT/"*)
+                    source="$HOME/${source/\$ROOT/dotfiles}"
+                    ;;
+                "\$HOME/"*)
+                    source="$HOME/${source/\$HOME\//}"
+                    ;;
+                /*)
+                    :
+                    ;;
+                *)
+                    source="$HOME/dotfiles/$module/$source"
+            esac
+            echo "$source"
+        done
+    done > "$INSTAL_PATH/var/bash/sources"
 }
 
 # todo: Promt confirmations

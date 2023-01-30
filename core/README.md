@@ -20,3 +20,9 @@ Lifecycle
   - [todo] binaries
 - Loading
   - [todo]
+
+
+Modules structure
+---
+
+`links` - file is used to define different types of links e.g. symlinks, paths, etc.

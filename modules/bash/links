@@ -1,0 +1,20 @@
+env    AWS_VAULT_BACKEND file
+home .bin     $ROOT/home/bin
+path /home/linuxbrew/.linuxbrew/bin
+path /home/linuxbrew/.linuxbrew/opt/php@7.4/bin
+path /home/linuxbrew/.linuxbrew/opt/php@7.4/sbin
+path $HOME/.local/bin
+path $HOME/bin
+path $ROOT/home/bin
+# Todo: add WSL-specific binaries when needed only
+path $ROOT/home/bin/wsl
+source $HOME/.cargo/env
+source config.sh
+source functions.sh
+source wsl.sh
+source autocompletion/docker
+source autocompletion/docker-compose
+source autocompletion/git
+source autocompletion/helm
+source autocompletion/terraform
+source $HOME/.bashrc.sh
