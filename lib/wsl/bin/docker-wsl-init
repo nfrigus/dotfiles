@@ -1,0 +1,10 @@
+#!/bin/sh
+
+EXEs="docker.exe docker-compose.exe kubectl.exe docker-credential-desktop.exe helm.exe"
+
+for exe in $EXEs; do
+    EXE_PATH="$(type "$exe" | sed "s/$exe is //")"
+    if [ ! -x "$EXE_PATH" ]; then
+        chmod -c +x "$EXE_PATH"
+    fi
+done

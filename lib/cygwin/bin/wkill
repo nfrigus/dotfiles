@@ -1,0 +1,21 @@
+#!/bin/bash
+
+
+FOUND=$(tasklist | sed 1,3d | egrep -i "^$1" | awk '{print $1}' | sort -u)
+
+if [ -z "$FOUND" ]; then
+	echo ">>> No matching processes"
+	exit
+fi
+
+echo -e "Found processes:\n$FOUND"
+
+read -p ">>> Confirm kill? (yY): " -n 1 -r
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    echo $FOUND | xargs -n1 taskkill /F /im
+else
+	echo -e "\n>>> Aborted"
+fi
+

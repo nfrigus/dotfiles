@@ -1,0 +1,52 @@
+#!/bin/sh
+
+
+AWS_BIN=/home/nfrigus/.local/bin/aws
+
+print_regions() {
+	echo ap-northeast-1
+	echo ap-northeast-2
+	echo ap-south-1
+	echo ap-southeast-1
+	echo ap-southeast-2
+	echo ca-central-1
+	echo eu-central-1
+	echo eu-west-1
+	echo sa-east-1
+	echo us-east-1
+	echo us-east-2
+	echo us-west-1
+	echo us-west-2
+}
+
+aws() {
+	$AWS_BIN $*
+}
+
+print_instance_by_region() {
+	for region in `print_regions`; do
+		echo -ne "$region\t"
+		aws ec2 describe-instances --region $region $* | jq '.Reservations|length'
+	done
+}
+
+case $1 in
+	regions)
+		print_regions
+		;;
+	r)
+		print_regions
+		;;
+	ec2-locate)
+		shift
+		print_instance_by_region $*
+		;;
+	where)
+		shift
+		print_instance_by_region $*
+		;;
+	*)
+		aws $*
+		;;
+esac
+

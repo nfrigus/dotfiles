@@ -1,3 +1,6 @@
 [submodule "modules/vim/base"]
 	path = modules/vim/base
 	url = git@github.com:amix/vimrc.git
+[submodule "lib/vim/base"]
+	path = lib/vim/base
+	url = git@github.com:amix/vimrc.git

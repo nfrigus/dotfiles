@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Remove duplicate entries from PATH.
+# Usage: PATH="$(path consolidate "$PATH")"
+consolidate() {
+	result=":"
+
+	IFS=:
+	for p in $1; do
+	  [[ "$result" == *:"$p":* ]] || result="${result}${p}:"
+	done
+
+	result="${result#:}"
+	echo "${result%:}"
+}
+
+# Print path entries one per line
+path() {
+    echo "$1" | tr : "\n"
+}
+
+# todo: wip
+path-add() {
+	export XXX=7777
+}
+
+case "$1" in
+consolidate)
+	shift
+	consolidate "$1"
+	;;
+stdin)
+	while read line; do
+		path "$line"
+	done
+	;;
+*)
+	path "$PATH"
+	;;
+esac

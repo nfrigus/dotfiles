@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec jq-win64 $*
+
