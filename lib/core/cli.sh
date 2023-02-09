@@ -78,7 +78,7 @@ set_symlinks() {
 
 get_module_config() {
     local module="$1"
-    local config="$ROOT_DIR/lib/$module/links"
+    local config="$ROOT_DIR/lib/$module/doty.mod"
 
     [ -f "$config" ] && cat "$config"
 }
