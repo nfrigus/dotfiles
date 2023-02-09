@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT_DIR="$(realpath -L -- "$(dirname -- "$0")/../..")"
+ROOT_DIR="$(realpath -L -- "$(dirname -- "$0")/../../..")"
 cache=()
 
 # 1 - ERROR
@@ -36,11 +36,16 @@ cmd_install() {
 }
 
 print_help() {
-    echo "$0 <command>"
+    echo "Doty framework manager"
+    echo ""
+    echo "Usage:"
+    echo "  ${0##*/} [options] <command>"
+    echo ""
+    echo "Options:"
+    echo "  -v        verbose output"
     echo ""
     echo "Commands:"
-    echo "  install - integrate into system"
-    echo "  sync - update symlinks, path cache and imports"
+    echo "  install   integrate into system and refresh cache"
 }
 
 set_symlinks() {
