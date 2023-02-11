@@ -2,6 +2,30 @@
 
 # Remove duplicate entries from PATH.
 # Usage: PATH="$(path consolidate "$PATH")"
+main() {
+	case "$1" in
+	consolidate)
+		shift
+		consolidate "$1"
+		;;
+	reset)
+		echo "not implemented"
+		;;
+	add)
+		echo "not implemented"
+		;;
+	stdin)
+		while read line; do
+			print_paths "$line"
+		done
+		;;
+	*)
+		print_paths "$PATH"
+		;;
+	esac
+}
+
+# Clear PATH duplicates
 consolidate() {
 	result=":"
 
@@ -15,26 +39,8 @@ consolidate() {
 }
 
 # Print path entries one per line
-path() {
+print_paths() {
     echo "$1" | tr : "\n"
 }
 
-# todo: wip
-path-add() {
-	export XXX=7777
-}
-
-case "$1" in
-consolidate)
-	shift
-	consolidate "$1"
-	;;
-stdin)
-	while read line; do
-		path "$line"
-	done
-	;;
-*)
-	path "$PATH"
-	;;
-esac
+main "$@"

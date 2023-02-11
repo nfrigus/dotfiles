@@ -1,6 +1,8 @@
 #!/bin/bash
 
 ROOT_DIR="$(realpath -L -- "$(dirname -- "$0")/../../..")"
+PATH_CAHCE_FILE="$ROOT_DIR/var/bash/paths"
+SOURCES_CACHE_FILE="$ROOT_DIR/var/bash/sources"
 cache=()
 
 # 1 - ERROR
@@ -49,8 +51,8 @@ print_help() {
 }
 
 set_symlinks() {
-    local k
-    local v
+    local source
+    local target
     local entries
     for module in $(list_modules); do
         readarray -t entries < <(
@@ -60,23 +62,11 @@ set_symlinks() {
         )
 
         for entry in "${entries[@]}"; do
-            k="$(echo "$entry" | cut -d\  -f1 )"
-            v="$(echo "$entry" | cut -d\  -f2- | xargs)"
-            case $v in
-                "\$ROOT")
-                    v="$ROOT_DIR"
-                    ;;
-                "\$ROOT/"*)
-                    v="${v/\$ROOT/dotfiles}"
-                    ;;
-                /*)
-                    :
-                    ;;
-                *)
-                    v="dotfiles/lib/$module/$v"
-                    ;;
-            esac
-            set_symlink "$HOME/$k" "$v"
+            source="$(echo "$entry" | cut -d\  -f1 )"
+            target="$(echo "$entry" | cut -d\  -f2- | xargs)"
+            target="$(parse_doty_mod_path --relative-root "$target" "$module")"
+
+            set_symlink "$HOME/$source" "$target" "$module"
         done
     done
 }
@@ -96,78 +86,105 @@ get_module_local_path() {
 
 cache_paths() {
     local path
-    for module in $(list_modules); do
-        path="$HOME/dotfiles/$(get_module_local_path $module)/bin"
-        [ -d "$path" ] && echo "$path"
+    local paths
 
-        get_module_config $module \
-        | awk '/^path /' \
-        | cut -d\  -f2- \
-        | while read -r path; do
-            case $path in
-                "\$ROOT/"*)
-                    path="$HOME/${path/\$ROOT/dotfiles}"
-                    ;;
-                "\$HOME/"*)
-                    path="$HOME/${path/\$HOME\/}"
-                    ;;
-                /*)
-                    :
-                    ;;
-                *)
-                    path="$HOME/dotfiles/$module/$path"
-            esac
-            echo "$path"
+    log debug cache_paths Path cache reset
+    : > $PATH_CAHCE_FILE
+
+    for module in $(list_modules); do
+        readarray -t paths < <(
+            echo bin \
+            && get_module_config $module \
+            | awk '/^path /' \
+            | cut -d\  -f2-
+        )
+
+        for path in "${paths[@]}"; do
+            path="$(parse_doty_mod_path "$path" "$module")"
+            cache_paths_add "$path" "$module"
         done
-    done > "$ROOT_DIR/var/bash/paths"
+    done
+}
+
+cache_paths_add() {
+    local path="$1"
+    local module="$2"
+
+    if [ -d "$path" ]; then
+        log info "bash.path@$module" "register $path"
+        echo "$path" >> "$ROOT_DIR/var/bash/paths"
+    else
+        log warn "bash.path@$module" "invalid path $path"
+    fi
 }
 
 cache_sources() {
+    local source
+    log debug "bash.sources" wiping cache file "$SOURCES_CACHE_FILE"
+    : > "$SOURCES_CACHE_FILE"
     for module in $(list_modules); do
         get_module_config $module \
         | awk '/^source /' \
         | cut -d\  -f2- \
         | while read -r source; do
-            case $source in
-                "\$ROOT/"*)
-                    source="$HOME/${source/\$ROOT/dotfiles}"
-                    ;;
-                "\$HOME/"*)
-                    source="$HOME/${source/\$HOME\//}"
-                    ;;
-                /*)
-                    :
-                    ;;
-                *)
-                    source="$HOME/dotfiles/$(get_module_local_path $module)/$source"
-            esac
-            echo "$source"
+            source="$(parse_doty_mod_path "$source" "$module")"
+            log info "bash.sources@$module" "register $source"
+            echo "$source" >> "$SOURCES_CACHE_FILE"
         done
-    done > "$ROOT_DIR/var/bash/sources"
+    done
+}
+
+parse_doty_mod_path() {
+    local home_prefix="$HOME/dotfiles"
+    if [ "$1" = --relative-root ]; then
+        shift
+        home_prefix="dotfiles"
+    fi
+    local path="$1"
+    local module="$2"
+
+    case $path in
+        "\$ROOT")
+            path="$ROOT_DIR"
+            ;;
+        "\$ROOT/"*)
+            path="$home_prefix/${path/\$ROOT\//}"
+            ;;
+        "\$HOME/"*)
+            path="$HOME/${path/\$HOME\//}"
+            ;;
+        /*)
+            :
+            ;;
+        *)
+            path="$home_prefix/$(get_module_local_path $module)/$path"
+    esac
+    echo "$path"
 }
 
 set_symlink() {
     local source="$1"
     local target="$2"
+    local module="$3"
 
-    log debug set_symlink.call "$source => $target"
+    log debug "symlink@$module" "$source => $target"
 
     if [ -L "$source" ]; then
         local value="$(readlink "$source")"
         if [ "$value" = "$target" ]; then
-            log info "Symlink synced" "$source -> $target"
+            log info "symlink@$module" "skip $source -> $target"
         else
             confirm "$source is link to $value. Overwrite it to target $target?" \
             && ln -sf "$target" "$source" \
-            && log info "Symlink updated" "$source -> $target"
+            && log info "symlink@$module" "update $source -> $target"
         fi
     elif [ -f "$source" ]; then
         confirm "$source already exists. Confirm overwriting?" \
         && ln -sf "$target" "$source" \
-        && log info "Symlink created" "$source -> $target"
+        && log info "symlink@$module" "overwrite $source -> $target"
     else
         ln -s "$target" "$source" \
-        && log info "Symlink created" "$source -> $target"
+        && log info "symlink@$module" "create $source -> $target"
     fi
 }
 
