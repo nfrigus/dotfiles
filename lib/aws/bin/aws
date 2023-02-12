@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# todo: awscli installation management
+AWS_BIN="$(realpath -L -- "$(dirname -- "$0")/../../../usr/aws/aws-cli/v2/2.9.19/bin/aws")"
+
+main() {
+	local aws_args=()
+	local cmd_args=()
+	local cmd=aws
+
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			--version|-v)
+				echo "$AWS_BIN"
+				aws_args+=(--version)
+				;;
+			--profile|-p)
+				shift
+				aws_args+=(--profile $1)
+				;;
+			id)
+				cmd_args+=(sts get-caller-identity)
+				;;
+			ec2-locate|where)
+				cmd=print_instance_by_region
+				;;
+			regions|r)
+				cmd=print_regions
+				;;
+			*)
+				cmd_args+=($1)
+				;;
+		esac
+		shift
+	done
+
+	"$cmd" "${aws_args[@]}" "${cmd_args[@]}"
+}
+
+id() {
+	aws "$@" sts get-caller-identity
+}
+
+print_regions() {
+	aws "$@" ec2 describe-regions \
+    --all-regions \
+    --query "Regions[].{Name:RegionName}" \
+    --output text
+}
+
+aws() {
+	$AWS_BIN "$@"
+}
+
+print_instance_by_region() {
+	for region in `print_regions`; do
+		echo -ne "$region\t"
+		aws ec2 describe-instances --region $region "$@" | jq '.Reservations|length'
+	done
+}
+
+main "$@"
