@@ -1,8 +1,10 @@
 #!/bin/bash
 
 ROOT_DIR="$(realpath -L -- "$(dirname -- "$0")/../../..")"
+BACKUP_DIR="$ROOT_DIR/var/bak/$(date +%s)"
 PATH_CAHCE_FILE="$ROOT_DIR/var/bash/paths"
 SOURCES_CACHE_FILE="$ROOT_DIR/var/bash/sources"
+
 cache=()
 
 # 1 - ERROR
@@ -172,25 +174,38 @@ set_symlink() {
     if [ -L "$source" ]; then
         local value="$(readlink "$source")"
         if [ "$value" = "$target" ]; then
-            log info "symlink@$module" "skip $source -> $target"
+            log info "symlink@$module" "skipped $source -> $target"
         else
             confirm "$source is link to $value. Overwrite it to target $target?" \
-            && ln -sf "$target" "$source" \
-            && log info "symlink@$module" "update $source -> $target"
+            && ln -snf "$target" "$source" \
+            && log info "symlink@$module" "updated $source -> $target"
         fi
     elif [ -f "$source" ]; then
-        confirm "$source already exists. Confirm overwriting?" \
-        && ln -sf "$target" "$source" \
-        && log info "symlink@$module" "overwrite $source -> $target"
+        confirm "$source is a file. Overwrite?" && {
+            archive "$source"
+            ln -snf "$target" "$source"
+            log info "symlink@$module" "overwritten file $source -> $target. Backup saved to $BACKUP_DIR."
+        }
+    elif [ -d "$source" ]; then
+        confirm "$source is a directory. Overwrite?" && {
+            archive "$source"
+            ln -snf "$target" "$source"
+            log info "symlink@$module" "overwritten directory $source -> $target. Backup saved to $BACKUP_DIR."
+        }
     else
-        ln -s "$target" "$source" \
-        && log info "symlink@$module" "create $source -> $target"
+        ln -snf "$target" "$source"
+        log info "symlink@$module" "created $source -> $target"
     fi
+}
+
+archive() {
+    mkdir -p $BACKUP_DIR
+    mv -t $BACKUP_DIR "$@"
 }
 
 confirm() {
     local msg=${1:-Proceed?}
-    read -p "> $msg [yn]" -n 1 -r
+    read -p "> $msg [yn] " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]
     then
