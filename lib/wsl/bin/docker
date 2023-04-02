@@ -19,7 +19,11 @@ image() {
 
 
 case "$1" in
-image)
+sh|ssh)
+    shift
+    docker exec -it $1 sh
+    ;;
+image|i)
     shift
     image "$@"
     ;;
@@ -30,4 +34,3 @@ prune)
     docker "$@"
     ;;
 esac
-

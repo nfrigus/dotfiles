@@ -50,22 +50,6 @@ ssl-test() {
 alias https-cert='ssl-test'
 alias read-cert='ssl-test'
 
-dr() {
-    case $1 in
-    sh|ssh)
-        shift
-        docker exec -it $1 bash
-        ;;
-    i)
-        shift
-        docker images $*
-        ;;
-    *)
-        docker $*
-        ;;
-    esac
-}
-
 try() {
     $(echo "$*") && echo 1 || echo 0
 }
