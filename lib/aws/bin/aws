@@ -25,6 +25,9 @@ main() {
 			id)
 				cmd_args+=(sts get-caller-identity)
 				;;
+			ecr-login)
+				cmd=ecr_login
+				;;
 			ec2-locate|where)
 				cmd=print_instance_by_region
 				;;
@@ -47,6 +50,25 @@ main() {
 
 id() {
 	aws "$@" sts get-caller-identity
+}
+
+# Call docker login for aws ecr
+ecr_login() {
+	if [ "$1" != --region ]; then
+		echo "error: No region provided"
+		echo "example:"
+		echo "  aws ecr-login --region <region>"
+		return 1
+	fi
+	if [ $# -ne 2 ]; then
+		echo "error: Too many arguments provided"
+		echo "example:"
+		echo "  aws ecr-login --region <region>"
+		return 1
+	fi
+	local account_id=$(id "$@" | jq -r .Account)
+
+	aws ecr get-login-password "$@" | docker login --username AWS --password-stdin $account_id.dkr.ecr.$2.amazonaws.com
 }
 
 print_regions() {
