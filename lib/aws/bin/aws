@@ -18,6 +18,10 @@ main() {
 				shift
 				aws_args+=(--profile $1)
 				;;
+			--region|-r)
+				shift
+				aws_args+=(--region $1)
+				;;
 			id)
 				cmd_args+=(sts get-caller-identity)
 				;;
