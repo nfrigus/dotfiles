@@ -75,3 +75,30 @@ stopwatch() {
     sleep 0.1
     done
 }
+
+# Run dummy HTTP-server with netcat
+# Usage:
+#   ncl [port=8080]
+ncl() {
+    local port=${1:-8080}
+    echo "Listening to :$port"
+    while true
+    do echo -e 'HTTP/1.1 200 OK\n' | nc -q1 -l $port
+    done
+}
+
+# Probe remote tcp port
+# Usage:
+#   probe <host> <port> [timeout=1]
+port-probe() {
+	timeout ${3:-1} bash -c "cat < /dev/null > /dev/tcp/$1/$2" && echo connected || echo no response
+}
+
+# Forward local port to remote target
+# Usage:
+#   port-forward <port> <target>
+# Example:
+#   port-forward 8080 google.com:80
+port-forward() {
+    socat tcp-listen:$1,reuseaddr,fork tcp:$2
+}
