@@ -72,6 +72,7 @@ untrack = branch --unset-upstream
 track = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
 fa = fetch --all --tags --verbose
 pf = push --force-with-lease
+po = push origin
 rl = remote --verbose
 rp = remote prune
 rpo = remote prune origin
