@@ -1,0 +1,70 @@
+#!/bin/bash
+
+main() {
+    case "$1" in
+    init)
+        terraform "$@"
+        ;;
+    fmt-recursive|fmtr)
+        fmt_recursive
+        ;;
+    plan-summary|ps)
+        shift
+        terraform plan -no-color "$@" | plan_summary
+        ;;
+    plan-only|po)
+        shift
+        terraform state list | awk "/$1/{ print \"-target '\" \$0 \"'\" }" | xargs "$0" plan
+        ;;
+    *)
+        terraform "$@"
+        ;;
+    esac
+}
+
+terraform() {
+    exec /usr/bin/terraform "$@"
+}
+
+fmt_recursive_old() {
+    @find \
+		-type f \
+		-name \*.tf \
+		-not -path ./.terraform/\* \
+		-not -path ./legacy/\* \
+		-printf '%h\n' \
+	| sort -u \
+	| xargs -i bash -c "cd {}; pwd; terraform fmt;"
+}
+
+fmt_recursive() {
+    local CACHE_FILE=tf-folders.cache
+
+    test -f "$CACHE_FILE" \
+    || find -name \*.tf -exec dirname {} \; \
+    | ag -v '/\.terraform/' \
+    | sort -u \
+    > "$CACHE_FILE"
+
+    cat "$CACHE_FILE" \
+    | while read -r d
+    do (
+        cd $d
+        echo "  Formatting $d"
+        terraform fmt
+    )
+    done
+}
+
+plan_summary() {
+	grep -P '^  # .* (will|must) be' \
+	| sed \
+		-e 's/will be updated in-place/~/' \
+		-e 's/will be created/+/' \
+		-e 's/will be destroyed/-/' \
+		-e 's/must be replaced/*/' \
+		-e 's/will be read during apply/</' \
+	| awk '{print $3 " " $2}'
+}
+
+main "$@"
