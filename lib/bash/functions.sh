@@ -51,14 +51,14 @@ alias https-cert='ssl-test'
 alias read-cert='ssl-test'
 
 try() {
-    $(echo "$*") && echo 1 || echo 0
+    "$@" && echo pass || echo fail
 }
 
 apt-find() {
-    apt search $* | grep -vE '^$' | sed -re 'N;s,/.*\n,|,' | column -ts '|' | grep $*
+    apt search "$*" | grep -vE '^$' | sed -re 'N;s,/.*\n,|,' | column -ts '|' | grep "$*"
 }
 
-countdown(){
+countdown() {
     date1=$((`date +%s` + $1));
     while [ "$date1" -ge `date +%s` ]; do
     ## Is this more than 24h away?
@@ -67,7 +67,8 @@ countdown(){
     sleep 0.1
     done
 }
-stopwatch(){
+
+stopwatch() {
     date1=`date +%s`;
     while true; do
     days=$(( $(($(date +%s) - date1)) / 86400 ))

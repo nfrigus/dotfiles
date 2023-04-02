@@ -85,7 +85,7 @@ aws() {
 print_instance_by_region() {
 	for region in `print_regions`; do
 		echo -ne "$region\t"
-		aws ec2 describe-instances --region $region "$@" | jq '.Reservations|length'
+		aws "$@" ec2 describe-instances --region $region "$@" | jq '.Reservations|length'
 	done
 }
 
