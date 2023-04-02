@@ -1,5 +1,4 @@
 #!/bin/sh
 
-# exec kubectl.exe "$@"
 exec /usr/bin/kubectl "$@"
 

@@ -10,9 +10,6 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-alias kube=kubectl
-alias kcat=kafkacat
-
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -31,7 +28,7 @@ wanip() {
     curl -s ipecho.net/plain | xargs
 }
 
-foos() {
+declare_list_functions() {
     declare -F | awk '{print$3}' && alias | sed -e 's/alias //' -e "s/=/\t/"
 }
 
