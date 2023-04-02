@@ -31,6 +31,10 @@ main() {
 			regions|r)
 				cmd=print_regions
 				;;
+			ssm-get-parameter-decrypted|ssm-decrypt)
+				shift
+				cmd_args=(ssm get-parameter --with-decryption --query Parameter.Value --output text "${cmd_args[@]}" --name "$1")
+				;;
 			*)
 				cmd_args+=($1)
 				;;
