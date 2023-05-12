@@ -1,4 +1,19 @@
 #!/bin/sh
 
-exec /usr/bin/kubectl "$@"
+kubectl() {
+    /usr/bin/kubectl "$@"
+}
 
+case "$1" in
+use)
+    shift
+    if [ -z "$1" ]; then
+        kubectl config get-contexts
+    else
+        kubectl config use $1
+    fi
+    ;;
+*)
+    kubectl "$@"
+    ;;
+esac
