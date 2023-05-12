@@ -5,30 +5,23 @@ docker() {
     /usr/bin/docker "$@"
 }
 
-image() {
-    case "$1" in
-    prune)
-        shift
-        docker rmi $(docker images --format '{{.ID}}' --filter=dangling=true)
-    ;;
-    *)
-        docker image "$@"
-        ;;
-    esac
-}
-
-
 case "$1" in
 sh|ssh)
     shift
     docker exec -it $1 sh
     ;;
+rmc)
+    docker rm -f `docker ps -qa`
+    ;;
 image|i)
     shift
-    image "$@"
+    docker image "$@"
     ;;
 prune)
-    docker rm -f `docker ps -qa`
+    docker system prune
+    ;;
+volumes)
+    docker volume ls
     ;;
 *)
     docker "$@"
