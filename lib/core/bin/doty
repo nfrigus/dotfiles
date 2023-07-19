@@ -116,7 +116,7 @@ cache_paths_add() {
         log info "bash.path@$module" "register $path"
         echo "$path" >> "$ROOT_DIR/var/bash/paths"
     else
-        log warn "bash.path@$module" "invalid path $path"
+        log warn "bash.path@$module" "fail register $path"
     fi
 }
 
@@ -130,8 +130,12 @@ cache_sources() {
         | cut -d\  -f2- \
         | while read -r source; do
             source="$(parse_doty_mod_path "$source" "$module")"
-            log info "bash.sources@$module" "register $source"
-            echo "$source" >> "$SOURCES_CACHE_FILE"
+            if [ -f "$source" ]; then
+                log info "bash.sources@$module" "register $source"
+                echo "$source" >> "$SOURCES_CACHE_FILE"
+            else
+                log warn "bash.sources@$module" "fail register $source"
+            fi
         done
     done
 }
