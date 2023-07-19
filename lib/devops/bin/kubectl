@@ -1,19 +1,49 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+main() {
+	local args=()
+	local command=(kubectl)
+
+	while [ $# -gt 0 ]; do
+        case "$1" in
+        --)
+            args+=("$@")
+            break
+            ;;
+        use)
+            if [ $# -gt 1 ]; then
+                shift
+                command+=(config use "$1")
+            else
+                command+=(config get-contexts)
+            fi
+            ;;
+        -oy)
+            args+=(-o yaml)
+            ;;
+        -oj)
+            args+=(-o json)
+            ;;
+        -oq)
+            shift
+            args+=(-o jsonpath="{$1}")
+            ;;
+        sh)
+            shift
+            kubectl exec -it "$1" -- "${2:-sh}"
+            ;;
+        *)
+            args+=("$1")
+            ;;
+        esac
+		shift
+	done
+
+	"${command[@]}" "${args[@]}"
+}
 
 kubectl() {
     /usr/bin/kubectl "$@"
 }
 
-case "$1" in
-use)
-    shift
-    if [ -z "$1" ]; then
-        kubectl config get-contexts
-    else
-        kubectl config use $1
-    fi
-    ;;
-*)
-    kubectl "$@"
-    ;;
-esac
+main "$@"
