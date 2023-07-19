@@ -17,7 +17,8 @@ Lifecycle
 
 - Initiation - run once on dotfiles install
   - symlinking
-  - [todo] binaries
+  - path cahing
+  - bash sources caching
 - Loading
   - [todo]
 
