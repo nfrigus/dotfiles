@@ -1,0 +1,3 @@
+if type terraform 2>&1 >/dev/null; then
+    complete -C terraform terraform
+fi
