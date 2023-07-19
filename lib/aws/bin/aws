@@ -25,6 +25,9 @@ main() {
 			id)
 				cmd_args+=(sts get-caller-identity)
 				;;
+			eks-login)
+				cmd_args+=(eks update-kubeconfig --name)
+				;;
 			ecr-login)
 				cmd=ecr_login
 				;;
