@@ -43,7 +43,13 @@ main() {
 }
 
 kubectl() {
-    /usr/bin/kubectl "$@"
+    local CMD=/usr/bin/kubectl
+
+    if [ -f /home/linuxbrew/.linuxbrew/bin/kubectl ]; then
+        CMD=/home/linuxbrew/.linuxbrew/bin/kubectl
+    fi
+
+    "$CMD" "$@"
 }
 
 main "$@"
