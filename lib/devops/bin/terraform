@@ -58,13 +58,13 @@ fmt_recursive() {
 
 plan_summary() {
 	grep -P '^  # .* (will|must) be' \
-	| sed \
-		-e 's/will be updated in-place/~/' \
-		-e 's/will be created/+/' \
-		-e 's/will be destroyed/-/' \
-		-e 's/must be replaced/*/' \
-		-e 's/will be read during apply/</' \
-	| awk '{print $3 " " $2}'
+	| sed -r '
+	    s/^  # (.*) must be replaced/* \1/;
+	    s/^  # (.*) will be created/+ \1/;
+	    s/^  # (.*) will be destroyed/- \1/;
+	    s/^  # (.*) will be read during apply/< \1/;
+        s/^  # (.*) will be updated in-place/~ \1/;
+    '
 }
 
 main "$@"
