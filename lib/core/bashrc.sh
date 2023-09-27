@@ -5,9 +5,9 @@
 
 root="$HOME/dotfiles"
 
-PATH="$(paste -sd : "$root/var/bash/paths"):$PATH"
-PATH="$(path consolidate "$PATH")"
-
 for source in $(cat "$root/var/bash/sources"); do
     [ -f "$source" ] && source "$source"
 done
+
+PATH="$(paste -sd : "$root/var/bash/paths"):$PATH"
+PATH="$(path consolidate "$PATH")"
