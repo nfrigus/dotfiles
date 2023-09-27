@@ -22,3 +22,5 @@ editor = vim
 excludesfile = ~/.gitignore
 fileMode = false
 autocrlf = false
+[init]
+	defaultBranch = main
