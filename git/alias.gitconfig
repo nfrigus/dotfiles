@@ -97,6 +97,10 @@ bd  = branch --delete
 bdf = branch --delete --force
 bw  = update-ref -d HEAD            # remove all commits from the current branch
 
+
+# ollama
+llm = !git diff --staged | ollama run tavernari/git-commit-message
+
 # Config (Parameters)
 alias = !git config --get-regexp ^alias | sed -r 's/alias.(\\S+) /\\1>/' | column -ts'>' -l2
 pg = config --get-regex

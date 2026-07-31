@@ -17,10 +17,12 @@ rebase = true
 autoStash = true
 
 [core]
-trustctime = false
+autocrlf = false
 editor = vim
 excludesfile = ~/.gitignore
 fileMode = false
-autocrlf = false
+trustctime = false
+
 [init]
-	defaultBranch = main
+defaultBranch = main
+
