@@ -2,7 +2,7 @@
 
 ROOT_DIR="$(realpath -L -- "$(dirname -- "$0")/../../..")"
 BACKUP_DIR="$ROOT_DIR/var/bak/$(date +%s)"
-PATH_CAHCE_FILE="$ROOT_DIR/var/bash/paths"
+PATH_CACHE_FILE="$ROOT_DIR/var/bash/paths"
 SOURCES_CACHE_FILE="$ROOT_DIR/var/bash/sources"
 
 cache=()
@@ -91,7 +91,7 @@ cache_paths() {
     local paths
 
     log debug cache_paths Path cache reset
-    : > $PATH_CAHCE_FILE
+    : > $PATH_CACHE_FILE
 
     for module in $(list_modules); do
         readarray -t paths < <(
