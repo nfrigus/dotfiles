@@ -2,9 +2,6 @@
 
 main() {
     case "$1" in
-    init)
-        terraform "$@"
-        ;;
     fmt-recursive|fmtr)
         fmt_recursive
         ;;
@@ -57,7 +54,7 @@ fmt_recursive() {
 }
 
 plan_summary() {
-	grep -P '^  # .* (will|must) be' \
+	grep -E '^  # .* (will|must) be' \
 	| sed -r '
 	    s/^  # (.*) must be replaced/* \1/;
 	    s/^  # (.*) will be created/+ \1/;

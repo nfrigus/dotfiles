@@ -29,7 +29,9 @@ wsl-init() {
 }
 
 wsl-v1-init() {
-	export DOCKER_HOST=tcp://0.0.0.0:2375
+	if [ -z "$DOCKER_HOST" ]; then
+		export DOCKER_HOST=tcp://0.0.0.0:2375
+	fi
 }
 
 wsl-v2-init() {
