@@ -1,3 +1,5 @@
+set -g extended-keys on
+
 # : << EOF
 # https://github.com/gpakosz/.tmux
 # (‑●‑●)> dual licensed under the WTFPL v2 license and the MIT license,
@@ -12,7 +14,7 @@
 # /!\ this disables some of Oh my tmux! bindings described in README.md
 #   - true
 #   - false (default)
-tmux_conf_preserve_stock_bindings=false
+tmux_conf_preserve_stock_bindings=true
 
 
 # -- session creation ----------------------------------------------------------
@@ -27,7 +29,7 @@ tmux_conf_new_session_prompt=false
 #   - true
 #   - false (default)
 #   - disabled (do not modify new-session bindings)
-tmux_conf_new_session_retain_current_path=false
+tmux_conf_new_session_retain_current_path=true
 
 
 # -- windows & pane creation ---------------------------------------------------
