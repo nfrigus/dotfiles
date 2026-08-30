@@ -1,61 +1,155 @@
 #!/bin/bash
 
 # todo: awscli installation management
-AWS_BIN="$(realpath -L -- "$(dirname -- "$0")/../../../usr/aws/aws-cli/v2/2.9.19/bin/aws")"
+AWS_BIN="$(realpath -L -- "$(dirname -- "$(realpath -L -- "$0")")/../../../usr/aws/aws-cli/v2.28.25/aws")"
 
 main() {
 	local aws_args=()
 	local cmd_args=()
 	local cmd=aws
+	local skip_cmd_args=false
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
-			--version|-v)
-				echo "$AWS_BIN"
-				aws_args+=(--version)
-				;;
-			--profile|-p)
-				shift
-				aws_args+=(--profile $1)
-				;;
-			--region|-r)
-				shift
-				aws_args+=(--region $1)
-				;;
-			id)
-				cmd_args+=(sts get-caller-identity)
-				;;
-			eks-login)
-				cmd_args+=(eks update-kubeconfig --name)
-				;;
-			ecr-login)
-				cmd=ecr_login
-				;;
-			ec2-locate|where)
-				cmd=print_instance_by_region
-				;;
-			regions|r)
-				cmd=print_regions
-				;;
-			ssm-get-parameter-decrypted|ssm-decrypt)
-				shift
-				cmd_args=(ssm get-parameter --with-decryption --query Parameter.Value --output text "${cmd_args[@]}" --name "$1")
-				;;
-			*)
-				cmd_args+=($1)
-				;;
+		# Arguments
+		--version|-v)
+			echo "$AWS_BIN"
+			aws_args+=(--version)
+			;;
+		--profile|-p)
+			shift
+			aws_args+=(--profile $1)
+			;;
+		--region|-r)
+			shift
+			aws_args+=(--region $1)
+			;;
+		# Authorization
+		id)
+			cmd_args+=(sts get-caller-identity)
+			;;
+		use)
+			shift
+			if [ -z "$1" ]; then
+				echo "error: No profile provided"
+				echo "example:"
+				echo "  aws use <profile>"
+				return 1
+			fi
+			aws_args+=(export AWS_PROFILE=$1)
+			cmd=echo
+			;;
+		eks-login)
+			cmd_args+=(eks update-kubeconfig --name)
+			;;
+		eks-autologin|eks-al)
+			shift
+			local cluster=$(main "${aws_args[@]}" eks list-clusters --query 'clusters[]' --output text "$@" | head -1)
+			# fixme: fail on multiple clusters, e.g., arn:aws:eks:eu-central-1:215362879038:cluster/global-crm-ml-bg
+			if [ -z "$cluster" ]; then
+				echo "error: No cluster found"
+				return 1
+			fi
+			echo "Using cluster: $cluster"
+			cmd_args+=(eks update-kubeconfig --name $cluster)
+
+			local role_arn=$(main "${aws_args[@]}" iam list-roles --query 'Roles[?ends_with(RoleName,`-eks-admin`)].Arn' --output text "$@" | head -1)
+			# fixme: fail on multiple matched roles, e.g., arn:aws:eks:eu-central-1:543897290820:cluster/global-infra-crm-multilicense-pp1
+			if [ -z "$role_arn" ]; then
+				echo "Found no admin role for EKS cluster"
+			else
+				echo "Using role: $role_arn"
+				cmd_args+=(--role-arn $role_arn)
+			fi
+
+			set -- "unshift" "$@"
+			;;
+		ecr-login)
+			cmd=ecr_login
+			;;
+		# Info
+		account-name|an)
+			cmd_args+=(account get-contact-information --query ContactInformation.FullName --output text)
+			;;
+		profiles|p)
+			cmd_args+=(configure list-profiles)
+			;;
+		profiles-info|pi)
+			cmd=print_profiles_info
+			;;
+		regions|r)
+			cmd=print_regions
+			;;
+		# Resources
+		ec2-locate|where)
+			cmd=print_instance_by_region
+			;;
+		ssm-get-parameter-decrypted|ssm-decrypt)
+			shift
+			cmd_args=(ssm get-parameter --with-decryption --query Parameter.Value --output text "${cmd_args[@]}" --name "$1")
+			;;
+		s3ls)
+			skip_cmd_args=true
+			cmd=list_buckets
+			;;
+		*)
+			cmd_args+=($1)
+			;;
 		esac
 		shift
 	done
 
-	"$cmd" "${aws_args[@]}" "${cmd_args[@]}"
+	if [[ "$skip_cmd_args" == "false" ]]; then
+		"$cmd" "${aws_args[@]}" "${cmd_args[@]}"
+	else
+		"$cmd" "${aws_args[@]}"
+	fi
 }
 
-id() {
-	aws "$@" sts get-caller-identity
+print_profiles_info() {
+	local profiles=($(main configure list-profiles))
+	(
+		for ((i=0; i<${#profiles[@]}; i++)); do
+			progress_bar $((i + 1)) ${#profiles[@]} "Processing ${profiles[i]}"
+			local user="$(main --profile "${profiles[i]}" sts get-caller-identity --query 'Arn' --output text 2>/dev/null || echo "n/a")"
+			local account="$(main account-name --profile "${profiles[i]}" 2>/dev/null || echo "n/a")"
+			echo -ne "${profiles[i]}|$user|$account\n"
+		done
+		progress_bar end
+	) | column -ts \|
 }
 
-# Call docker login for aws ecr
+list_buckets() {
+	for bucket in $(main "$@" s3api list-buckets --query 'Buckets[].Name' --output text); do
+		size=$(aws_bucket_size "$bucket" "$@")
+
+		printf "%-50s %15.2f GiB\n" "$bucket" "$(echo "${size:-0}/1024/1024/1024" | bc -l)"
+	done
+}
+
+aws_bucket_size() {
+	local bucket="$1"
+	shift
+	local size="$(
+		main "$@" cloudwatch get-metric-statistics \
+		--namespace AWS/S3 \
+		--metric-name BucketSizeBytes \
+		--dimensions Name=BucketName,Value="$bucket" Name=StorageType,Value=StandardStorage \
+		--statistics Average \
+		--start-time "$(date -u -d '3 days ago' +%FT%TZ)" \
+		--end-time "$(date -u +%FT%TZ)" \
+		--period 86400 \
+		--query 'Datapoints[0].Average' \
+		--output text
+	)"
+
+	if ! [[ "$size" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+		size=0
+	fi
+
+	echo "$size"
+}
+
 ecr_login() {
 	if [ "$1" != --region ]; then
 		echo "error: No region provided"
@@ -82,7 +176,7 @@ print_regions() {
 }
 
 aws() {
-	$AWS_BIN "$@"
+	"$AWS_BIN" "$@"
 }
 
 print_instance_by_region() {
@@ -90,6 +184,41 @@ print_instance_by_region() {
 		echo -ne "$region\t"
 		aws "$@" ec2 describe-instances --region $region "$@" | jq '.Reservations|length'
 	done
+}
+
+progress_bar() {
+    local current=$1
+    local total=$2
+    local text=$3
+
+    if [[ $current =~ ^[A-Za-z].*$ ]]; then
+		printf "\r%-*s\r" $(tput cols) "" >&2
+		return 0
+	fi
+
+	if [ "$current" -gt "$total" ]; then
+		current=$total
+	fi
+
+    local width=10
+	local filled=$((current * width / total))
+	local empty=$((width - filled))
+	local percent=$(printf "%3d%%" $((current * 100 / total)))
+	local bar="$(
+		printf "["
+		local i=0
+		while [ "$i" -lt "$filled" ]; do
+			printf "#"
+			i=$((i + 1))
+		done
+		while [ "$i" -lt "$width" ]; do
+			printf "-"
+			i=$((i + 1))
+		done
+		printf "]"
+	)"
+
+    printf "\r%-*s" $(tput cols) "$bar $percent $text" >&2
 }
 
 main "$@"
